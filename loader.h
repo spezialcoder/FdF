@@ -13,7 +13,7 @@
 //
 // Created by Lewin Sorg on 4/22/24.
 //
-#include "matrix.h"
+#include "matrix/matrix.h"
 #include "libft/libft.h"
 #include "libft/get_next_line.h"
 #include <fcntl.h>

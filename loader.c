@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   loader.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
+/*   Updated: 2024/06/02 21:06:11 by lsorg            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 //
 // Created by Lewin Sorg on 4/22/24.
 //
@@ -30,6 +42,7 @@ static void fetchInto(int fd, int *target) {
             pieceIdx++;
         }
         free_split_array(pieces);
+        free(rowEater);
         rowEater = get_next_line(fd);
     }
 }

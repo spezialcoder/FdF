@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 17:12:17 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/01 19:33:01 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/02 20:39:49 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ inline int abs(int n) {
     return (n < 0 ? -n : n);
 }
 
-void img_draw_line(mlx_image_t *image, t_position start, t_position end, int color) {
+void img_draw_line(mlx_image_t *image, t_position start, t_position end, u_int32_t color) {
     int dx = abs(end.x - start.x);
     int dy = abs(end.y - start.y);
     int sx = start.x < end.x ? 1 : -1;
@@ -29,8 +29,8 @@ void img_draw_line(mlx_image_t *image, t_position start, t_position end, int col
     int e2;
 
     while (!(start.x == end.x && start.y == end.y)) {
-        if(start.x >= 0 && start.y >= 0 &&
-        start.x <= image->width && start.y <= image->height) mlx_put_pixel(image,start.x,start.y,color);
+        if(start.x > 0 && start.y > 0 &&
+        start.x < image->width && start.y < image->height) mlx_put_pixel(image,start.x,start.y,color);
         e2 = 2 * err;
         if (e2 > -dy) {
             err -= dy;
@@ -41,6 +41,6 @@ void img_draw_line(mlx_image_t *image, t_position start, t_position end, int col
             start.y += sy;
         }
     }
-    if(start.x >= 0 && start.y >= 0 &&
-       start.x <= image->width && start.y <= image->height) mlx_put_pixel(image,start.x,start.y,color);
+    if(start.x > 0 && start.y > 0 &&
+       start.x < image->width && start.y < image->height) mlx_put_pixel(image,start.x,start.y,color);
 }

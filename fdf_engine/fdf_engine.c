@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/01 20:32:07 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/02 20:53:42 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,35 +19,36 @@ t_engine_config *init_engine(int width, int height, char *window_name,
     t_engine_config *engine;
 
     engine = ft_calloc(1,sizeof(t_engine_config));
-    engine->mlx = mlx_init(width,height,window_name,false);
+    engine->mlx = mlx_init(width,height,window_name,true);
     if(!engine->mlx) return (NULL);
     engine->image = mlx_new_image(engine->mlx,width,height);
     if(!engine->image) return (NULL);
     engine->affine = matrix_create(4,4);
-    init_isometrics(engine);
     calculate_state(engine);
     engine->map_dimension = get_map_dimension(filename);
     engine->map_data = load_map(filename, engine->map_dimension);
     engine->color = 0xFFFFFF;
+    engine->state.z_scale = 0.1;
+    init_hooks(engine);
     return (engine);
 }
 
-static void init_isometrics(t_engine_config *config) {
-    config->isometric = matrix_create(4,4);
-    config->isometric.matrix[0][0] = sqrt(3)/2;
-    config->isometric.matrix[0][2] = 0.5;
-    config->isometric.matrix[1][0] = 1/ sqrt(6);
-    config->isometric.matrix[1][1] = 2/ sqrt(6);
-    config->isometric.matrix[1][2] = -1/ sqrt(6);
-    config->isometric.matrix[3][3] = 1;
+
+void terminate_engine(t_engine_config *config) {
+    free(config->map_data);
+    matrix_delete(config->affine);
+    mlx_terminate(config->mlx);
+    mlx_delete_image(config->mlx,config->image);
+    free(config);
 }
+
 void plot_grid(t_engine_config *config) {
     t_matrix vertex3d;
     t_matrix vertex2d;
     int x;
     int y;
     mlx_delete_image(config->mlx,config->image);
-    config->image = mlx_new_image(config->mlx,1920,1080);
+    config->image = mlx_new_image(config->mlx,config->mlx->width,config->mlx->width);
     vertex3d = matrix_create(1,4);
     vertex2d = matrix_create(1,4);
     vertex3d.matrix[3][0] = 1;
@@ -70,30 +71,46 @@ void plot_grid(t_engine_config *config) {
                            &vertex3d,&vertex2d,config);
         y++;
     }
+    matrix_delete(vertex3d);
+    matrix_delete(vertex2d);
     mlx_image_to_window(config->mlx,config->image,0,0);
 }
 
 void calculate_state(t_engine_config *config) {
-    // Apply isometric transformation
-    t_matrix affine = matrix_dot(config->isometric, shaper_identity());
+    t_matrix affine;
+    t_matrix identity;
+    t_matrix tmp;
 
-// Translate
-    affine = matrix_dot(affine, shaper_translate(config->state.translation_x,
-                                                 config->state.translation_y,
-                                                 config->state.translation_z));
+    identity = shaper_identity();
+    tmp = shaper_translate(config->state.translation_x,
+                           config->state.translation_y,
+                           config->state.translation_z);
+    affine = matrix_dot(identity, tmp);
+    matrix_delete(tmp);
+    matrix_delete(identity);
+    tmp = shaper_translate((double)config->map_dimension.x/2*config->state.scale,
+                           (double)config->map_dimension.y/2*config->state.scale,
+                           0);
+    matrix_dot_ex(affine,tmp,affine);
+    matrix_delete(tmp);
+    tmp = shaper_rotate(config->state.rotation_x,
+                        config->state.rotation_y,
+                        config->state.rotation_z);
+    matrix_dot_ex(affine,tmp,affine);
+    matrix_delete(tmp);
 
-// Rotate
-    affine = matrix_dot(affine, shaper_rotate(config->state.rotation_x,
-                                              config->state.rotation_y,
-                                              config->state.rotation_z));
+    tmp = shaper_translate(-1*(double)config->map_dimension.x/2*config->state.scale,
+                           -1*(double)config->map_dimension.y/2*config->state.scale,
+                           0);
+    matrix_dot_ex(affine,tmp,affine);
+    matrix_delete(tmp);
 
-// Scale
-    affine = matrix_dot(affine, shaper_scale(config->state.scale));
+    tmp = shaper_scale(config->state.scale, config->state.z_scale);
+    matrix_dot_ex(affine,tmp,affine);
+    matrix_delete(tmp);
 
-// Update config->affine
     matrix_delete(config->affine);
     config->affine = affine;
-
 }
 
 

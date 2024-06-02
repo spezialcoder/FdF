@@ -6,19 +6,19 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:08:14 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/01 20:03:26 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/02 19:59:55 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf_engine.h"
 
-t_matrix shaper_scale(double scale) {
+t_matrix shaper_scale(double scale, double z_scale) {
     t_matrix transformation;
 
     transformation = matrix_create(4,4);
     transformation.matrix[0][0] = scale;
     transformation.matrix[1][1] = scale;
-    transformation.matrix[2][2] = scale;
+    transformation.matrix[2][2] = z_scale*scale;
     transformation.matrix[3][3] = 1;
     return (transformation);
 }
