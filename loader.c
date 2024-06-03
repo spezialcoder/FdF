@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/02 21:06:11 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 20:26:34 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,34 @@
 //
 
 #include "loader.h"
+
+static int	h_strlen(const char *s, char term)
+{
+    int	ssize;
+
+    ssize = 0;
+    while (*s && *(s++) != term)
+        ssize++;
+    return (ssize);
+}
+
+static int	h_count_words(const char *s, char delim)
+{
+    int	words;
+
+    words = 0;
+    while (*s)
+    {
+        if (h_strlen(s, delim))
+        {
+            words++;
+            s += h_strlen(s, delim);
+        }
+        else
+            s++;
+    }
+    return (words);
+}
 
 static void	free_split_array(char **array)
 {
@@ -63,19 +91,25 @@ int *load_map(char *filename, t_mapdim mapDim) {
 t_mapdim get_map_dimension(char *filename) {
     int fd;
     char *row;
+
+    int idx;
     t_mapdim dim;
 
+    idx = 0;
     ft_memset(&dim, 0,  sizeof(t_mapdim));
     fd = open(filename,O_RDONLY);
     if(fd < 0) {
         return (dim);
     }
     row = get_next_line(fd);
-    while(*row) {
-        if(ft_isdigit(*(row++))) dim.x++;
+    dim.x = h_count_words(row,' ');
+    dim.y = 0;
+    while(row) {
+        dim.y++;
+        free(row);
+        row = get_next_line(fd);
+
     }
-    dim.y = 1;
-    while(get_next_line(fd)) dim.y++;
     close(fd);
     return (dim);
 }

@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 17:12:17 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/02 20:39:49 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 20:58:34 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void img_draw_line(mlx_image_t *image, t_position start, t_position end, u_int32
 
     while (!(start.x == end.x && start.y == end.y)) {
         if(start.x > 0 && start.y > 0 &&
-        start.x < image->width && start.y < image->height) mlx_put_pixel(image,start.x,start.y,color);
+        start.x < (int)image->width && start.y < (int)image->height) mlx_put_pixel(image,start.x,start.y,color);
         e2 = 2 * err;
         if (e2 > -dy) {
             err -= dy;
@@ -42,5 +42,5 @@ void img_draw_line(mlx_image_t *image, t_position start, t_position end, u_int32
         }
     }
     if(start.x > 0 && start.y > 0 &&
-       start.x < image->width && start.y < image->height) mlx_put_pixel(image,start.x,start.y,color);
+       start.x < (int)image->width && start.y < (int)image->height) mlx_put_pixel(image,start.x,start.y,color);
 }

@@ -1,23 +1,29 @@
 NAME = fdf
 CC = cc
-LIBFT = $(PWD)/libft
-MINILIBX = $(PWD)/MLX42
-CFLAGS = -g $(MINILIBX)/libmlx42.a -lglfw -lm -lft -L$(LIBFT) -L$(MINILIBX) -framework Cocoa -framework OpenGL -framework IOKit #-Wall -Werror -Wextra
+LIBFT = $(PWD)/lib/libft
+LIBMLX= $(PWD)/lib/MLX42
+CFLAGS = -g $(LIBMLX)/build/libmlx42.a -lglfw -lm -lft -L$(LIBFT) -L$(LIBMLX) \
+	-framework Cocoa -framework OpenGL -framework IOKit  \
+	 -Wunreachable-code -Ofast -I $(LIBMLX)/include -I $(LIBFT) \
+	  -lglfw -pthread -Wextra -Wall -Werror
 
 SRCS = fdf.c mlx_utilities.c matrix/matrix.c loader.c fdf_engine/fdf_engine.c \
 	   fdf_engine/shaper.c fdf_engine/fdf_engine_utils.c fdf_engine/fdf_engine_hook.c \
 	   fdf_engine/fdf_engine_heatmap.c
 
-all: $(NAME)
+all: libmlx $(NAME)
 
 $(NAME): $(SRCS)
 	$(MAKE) -C $(LIBFT)
-	$(MAKE) -C $(MINILIBX)
 	$(CC) $(CFLAGS) $(SRCS) -o $(NAME)
+
+libmlx:
+	@cmake $(LIBMLX) -B $(LIBMLX)/build
+	$(MAKE) -C $(LIBMLX)/build -j4
 
 clean:
 	$(MAKE) clean -C $(LIBFT)
-	$(MAKE) clean -C $(MINILIBX)
+	$(MAKE) clean -C $(LIBMLX)/build
 
 fclean: clean
 	$(MAKE) fclean -C $(LIBFT)
@@ -25,4 +31,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re libmlx

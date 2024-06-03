@@ -6,11 +6,11 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 19:54:40 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/02 21:27:16 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 21:11:02 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
+#include "lib/libft/libft.h"
 #include "matrix/matrix.h"
 #include "loader.h"
 #include "mlx_utilities.h"
@@ -19,14 +19,17 @@
 
 
 static void printMatrix(t_matrix mat) {
-    for(int i = 0; i < mat.dim_y; i++) {
-        for(int j = 0; j < mat.dim_x; j++) {
+    for(uint32_t i = 0; i < mat.dim_y; i++) {
+        for(uint32_t j = 0; j < mat.dim_x; j++) {
             printf(" %f ",mat.matrix[i][j]);
         }
         printf("\n");
     }
 }
-
+//TODO: Scaling depends on the map size
+//TODO: Fucking colors in the map
+//TODO: HEATMAP
+//TODO: Some other funky shit
 int main(int argc, char *argv[]) {
     if(argc < 2) {
         ft_printf("Expecting arguments: ./fdf <map>\n");

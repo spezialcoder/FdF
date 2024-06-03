@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 15:32:46 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/01 15:08:06 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 20:06:23 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 // Created by Lewin Sorg on 4/22/24.
 //
 #include "matrix/matrix.h"
-#include "libft/libft.h"
-#include "libft/get_next_line.h"
+#include "lib/libft/libft.h"
+#include "lib/libft/get_next_line.h"
 #include <fcntl.h>
 
 #ifndef FDF_MAPPER_H

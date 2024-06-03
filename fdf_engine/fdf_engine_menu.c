@@ -6,9 +6,12 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 21:17:45 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/02 21:18:00 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 17:43:38 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf_engine.h"
 
+void	fdf_show_matrix(t_engine_config *config)
+{
+}

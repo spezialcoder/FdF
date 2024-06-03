@@ -6,14 +6,14 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 17:12:17 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/02 21:31:36 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/03 20:57:12 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <math.h>
-#include "MLX42/include/MLX42/MLX42.h"
+#include "lib/MLX42/include/MLX42/MLX42.h"
 
 typedef unsigned char       uint8;
 typedef unsigned short     uint16;
