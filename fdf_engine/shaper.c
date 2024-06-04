@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:08:14 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 19:59:57 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 13:12:53 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,12 @@ t_matrix	shaper_rotate(double rotation_x, double rotation_y,
 	transformation.matrix[3][3] = 1;
 	trot_z = shaper_rotate_Z(rotation_z);
 	trot_y = shaper_rotate_Y(rotation_y);
-	output = matrix_dot(trot_y, trot_z);
+    output = shaper_identity();
+    matrix_dot_ex_restrict(output,transformation,output);
+    matrix_dot_ex_restrict(output,trot_y,output);
+    matrix_dot_ex_restrict(output,trot_z,output);
 	matrix_delete(trot_y);
 	matrix_delete(trot_z);
-	matrix_dot_ex_restrict(output, transformation, output);
 	matrix_delete(transformation);
 	return (output);
 }

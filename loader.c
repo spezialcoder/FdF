@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 20:26:34 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 17:57:44 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,100 +16,36 @@
 
 #include "loader.h"
 
-static int	h_strlen(const char *s, char term)
-{
-    int	ssize;
+extern void fetchInto(int fd, t_map_vertex *target);
 
-    ssize = 0;
-    while (*s && *(s++) != term)
-        ssize++;
-    return (ssize);
-}
+t_map_vertex* load_map(char *filename, t_mapdim mapDim) {
 
-static int	h_count_words(const char *s, char delim)
-{
-    int	words;
-
-    words = 0;
-    while (*s)
-    {
-        if (h_strlen(s, delim))
-        {
-            words++;
-            s += h_strlen(s, delim);
-        }
-        else
-            s++;
-    }
-    return (words);
-}
-
-static void	free_split_array(char **array)
-{
-    int rowIdx;
-
-    rowIdx = 0;
-    while (array[rowIdx])
-        free(array[rowIdx++]);
-    free(array);
-}
-
-static void fetchInto(int fd, int *target) {
-    char *rowEater;
-    char **pieces;
-    int dataIdx;
-    int pieceIdx;
-
-    dataIdx = 0;
-    rowEater = get_next_line(fd);
-    while(rowEater) {
-        pieces = ft_split(rowEater,' ');
-        pieceIdx = 0;
-        while(pieces[pieceIdx]) {
-            target[dataIdx++] = ft_atoi(pieces[pieceIdx]);
-            pieceIdx++;
-        }
-        free_split_array(pieces);
-        free(rowEater);
-        rowEater = get_next_line(fd);
-    }
-}
-
-int *load_map(char *filename, t_mapdim mapDim) {
-
-    int *mapData;
+    t_map_vertex *mapData;
     int fd;
 
-    mapData = ft_calloc(mapDim.y,mapDim.x*sizeof(int));
+    mapData = ft_calloc(mapDim.y,mapDim.x*sizeof(t_map_vertex));
     if( !*((u_int64_t*)&mapDim) ) return (NULL);
     fd = open(filename,O_RDONLY);
     if(!fd) return (NULL);
     fetchInto(fd, mapData);
+    close(fd);
     return (mapData);
 }
 
-t_mapdim get_map_dimension(char *filename) {
-    int fd;
-    char *row;
+uint32_t atoi_hex(char *hex_string) {
+    uint32_t value;
 
-    int idx;
-    t_mapdim dim;
-
-    idx = 0;
-    ft_memset(&dim, 0,  sizeof(t_mapdim));
-    fd = open(filename,O_RDONLY);
-    if(fd < 0) {
-        return (dim);
+    hex_string = ft_strchr(hex_string,'x')+1;
+    value = 0;
+    while(*hex_string) {
+        value *= 16;
+        if(ft_isdigit(*hex_string)) {
+            value += *hex_string - '0';
+        } else {
+            value += *hex_string - 55;
+        }
+        hex_string++;
     }
-    row = get_next_line(fd);
-    dim.x = h_count_words(row,' ');
-    dim.y = 0;
-    while(row) {
-        dim.y++;
-        free(row);
-        row = get_next_line(fd);
+    return (value);
 
-    }
-    close(fd);
-    return (dim);
 }

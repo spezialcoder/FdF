@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 14:21:19 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 21:14:42 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 19:54:53 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,20 @@ static void	fdf_mouse(mouse_key_t button, action_t action __attribute__((unused)
 
 static void	fdf_scroll(double xdelta __attribute__((unused)), double ydelta, void *param)
 {
+    double tmp;
 	t_engine_config	*config;
 
 	config = (t_engine_config *)param;
 	if (config->state.scale > 1 || ydelta < 0)
 	{
-		config->state.scale -= sign(ydelta) * 2;
+        tmp = config->state.scale;
+        if(mlx_is_key_down(config->mlx,MLX_KEY_LEFT_CONTROL))
+		    config->state.scale -= (sign(ydelta) * 50.0) / config->scale_constant;
+        else
+            config->state.scale -= (sign(ydelta) * 10.0) / config->scale_constant;
+        if(config->state.scale < 0) {
+            config->state.scale = tmp;
+        }
 		calculate_state(config);
 		plot_grid(config);
 	}
@@ -68,10 +76,18 @@ static void	fdf_cursor(double xpos, double ypos, void *param)
 	}
 	if (mlx_is_mouse_down(config->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		config->state.rotation_x += (ypos - config->cursor_data.last_ypos)
+		config->state.rotation_x -= (ypos - config->cursor_data.last_ypos)
 			/ MOUSE_SENSITIVITY;
-		config->state.rotation_y -= (xpos - config->cursor_data.last_xpos)
+		config->state.rotation_y += (xpos - config->cursor_data.last_xpos)
 			/ MOUSE_SENSITIVITY;
+        if(fabs(config->state.rotation_x) > 2*M_PI) {
+            config->state.rotation_x = fmod(config->state.rotation_x,
+                                            2*M_PI);
+        }
+        if(fabs(config->state.rotation_y) > 2*M_PI) {
+            config->state.rotation_y = fmod(config->state.rotation_y,
+                                            2*M_PI);
+        }
 		config->cursor_data.last_xpos = xpos;
 		config->cursor_data.last_ypos = ypos;
 		calculate_state(config);
@@ -95,9 +111,9 @@ static void	fdf_key(mlx_key_data_t keydata, void *param)
 	config = (t_engine_config *)param;
 	if (keydata.key == MLX_KEY_I && keydata.action == MLX_PRESS)
 	{
-		config->state.rotation_x = -45 * (M_PI / 180);
-		config->state.rotation_y = 35.264 * (M_PI / 180);
-		config->state.rotation_z = 0;
+		config->state.rotation_x = 45 * (M_PI / 180);
+		config->state.rotation_z = 35.264 * (M_PI / 180);
+		config->state.rotation_y = 0;
 		calculate_state(config);
 		plot_grid(config);
 	}
@@ -119,14 +135,19 @@ static void	fdf_key(mlx_key_data_t keydata, void *param)
 	}
 	else if (keydata.key == MLX_KEY_Q)
 	{
-		config->state.rotation_z -= 5 * (M_PI / 180);
+		config->state.rotation_z -= 2.5 * (M_PI / 180);
 		calculate_state(config);
 		plot_grid(config);
 	}
 	else if (keydata.key == MLX_KEY_E)
 	{
-		config->state.rotation_z += 5 * (M_PI / 180);
+		config->state.rotation_z += 2.5 * (M_PI / 180);
 		calculate_state(config);
 		plot_grid(config);
-	}
+	} else if(keydata.key == MLX_KEY_R) {
+        reset_view(config);
+        calculate_state(config);
+        plot_grid(config);
+    }
 }
+

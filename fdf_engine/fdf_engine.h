@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 17:35:41 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 19:17:12 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct
 	double			last_ypos;
 }					t_cursor_data;
 
+
 typedef struct
 {
 	mlx_t			*mlx;
@@ -57,9 +58,10 @@ typedef struct
 	t_matrix		affine;
 	t_construct		state;
 	t_mapdim		map_dimension;
-	int				*map_data;
-	int				color;
+	t_map_vertex    *map_data;
+	uint32_t 		color;
 	t_cursor_data	cursor_data;
+    double          scale_constant;
 }					t_engine_config;
 
 t_engine_config		*init_engine(int width, int height, char *window_name,
@@ -79,3 +81,5 @@ void				connect_vertex(t_position pos1, t_position pos2,
 void				init_hooks(t_engine_config *config);
 int					sign(double value);
 uint32_t			calculate_color(int max, int min, int value);
+void fdf_show_space(t_engine_config *config);
+void reset_view(t_engine_config *config) ;

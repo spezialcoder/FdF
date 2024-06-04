@@ -6,11 +6,12 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 14:16:51 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 21:24:16 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 19:49:50 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf_engine.h"
+#define SCALE_CONSTANT 10.0
 
 t_engine_config	*init_engine(int width, int height, char *window_name,
 		char *filename)
@@ -25,12 +26,16 @@ t_engine_config	*init_engine(int width, int height, char *window_name,
 	if (!engine->image)
 		return (NULL);
 	engine->affine = matrix_create(4, 4);
-	calculate_state(engine);
 	engine->map_dimension = get_map_dimension(filename);
 	engine->map_data = load_map(filename, engine->map_dimension);
-	engine->color = 0xFFFFFF;
+	engine->color = 0xFFFFFFFF;
 	engine->state.z_scale = 0.1;
 	init_hooks(engine);
+    reset_view(engine);
+    calculate_state(engine);
+    engine->scale_constant = (sqrt(
+            ((engine->map_dimension.y*engine->map_dimension.x*1.0)+SCALE_CONSTANT)
+                              /SCALE_CONSTANT));
 	return (engine);
 }
 
@@ -77,6 +82,7 @@ void	plot_grid(t_engine_config *config)
 	}
 	matrix_delete(vertex3d);
 	matrix_delete(vertex2d);
+    fdf_show_space(config);
 	mlx_image_to_window(config->mlx, config->image, 0, 0);
 }
 
@@ -94,7 +100,7 @@ void	calculate_state(t_engine_config *config)
 	matrix_delete(identity);
 	tmp = shaper_translate((double)config->map_dimension.x / 2
 			* config->state.scale, (double)config->map_dimension.y / 2
-			* config->state.scale, 0);
+			* config->state.scale, -1.0*config->state.translation_z*config->state.scale);
 	matrix_dot_ex_restrict(affine, tmp, affine);
 	matrix_delete(tmp);
 	tmp = shaper_rotate(config->state.rotation_x, config->state.rotation_y,
@@ -103,10 +109,10 @@ void	calculate_state(t_engine_config *config)
 	matrix_delete(tmp);
 	tmp = shaper_translate(-1 * (double)config->map_dimension.x / 2
 			* config->state.scale, -1 * (double)config->map_dimension.y / 2
-			* config->state.scale, 0);
+			* config->state.scale, config->state.translation_z*config->state.scale);
 	matrix_dot_ex_restrict(affine, tmp, affine);
 	matrix_delete(tmp);
-	tmp = shaper_scale(config->state.scale, config->state.z_scale);
+    tmp = shaper_scale(config->state.scale, config->state.z_scale);
 	matrix_dot_ex_restrict(affine, tmp, affine);
 	matrix_delete(tmp);
 	matrix_delete(config->affine);

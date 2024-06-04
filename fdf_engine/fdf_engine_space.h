@@ -1,17 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf_engine_menu.c                                  :+:      :+:    :+:   */
+/*   fdf_engine_space.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/02 21:17:45 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 17:43:38 by lsorg            ###   ########.fr       */
+/*   Created: 2024/06/04 18:01:59 by lsorg             #+#    #+#             */
+/*   Updated: 2024/06/04 18:04:25 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#pragma once
 #include "fdf_engine.h"
 
-void	fdf_show_matrix(t_engine_config *config)
-{
-}
+typedef struct {
+    t_matrix xaxis;
+    t_matrix yaxis;
+    t_matrix zaxis;
+} t_unit_vectors;
+
+typedef struct {
+    uint32_t z_color;
+    uint32_t x_color;
+    uint32_t y_color;
+} t_axis_color;
+
+t_axis_color get_axis_colors(t_engine_config *config);

@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 15:32:46 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/03 20:06:23 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/04 15:54:24 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,16 @@
 typedef struct {
     u_int32_t x;
     u_int32_t y;
+    int max;
+    int min;
 } t_mapdim;
 
-int *load_map(char *filename, t_mapdim mapDim);
+typedef struct {
+    int value;
+    uint32_t color;
+} t_map_vertex;
+
 t_mapdim get_map_dimension(char *filename);
+t_map_vertex* load_map(char *filename, t_mapdim mapDim);
 
 #endif //FDF_MAPPER_H
