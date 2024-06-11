@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/02 14:21:19 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/04 19:54:53 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/06 16:05:21 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ void	init_hooks(t_engine_config *config)
 	mlx_mouse_hook(config->mlx, &fdf_mouse, (void *)config);
 }
 
-static void	fdf_mouse(mouse_key_t button, action_t action __attribute__((unused)),
-                         modifier_key_t mods __attribute__((unused)),
-		void *param)
+static void	fdf_mouse(mouse_key_t button,
+		action_t action __attribute__((unused)),
+		modifier_key_t mods __attribute__((unused)), void *param)
 {
 	t_engine_config	*config;
 	int32_t			xpos;
@@ -43,22 +43,26 @@ static void	fdf_mouse(mouse_key_t button, action_t action __attribute__((unused)
 	}
 }
 
-static void	fdf_scroll(double xdelta __attribute__((unused)), double ydelta, void *param)
+static void	fdf_scroll(double xdelta __attribute__((unused)), double ydelta,
+		void *param)
 {
-    double tmp;
+	double			tmp;
 	t_engine_config	*config;
 
 	config = (t_engine_config *)param;
 	if (config->state.scale > 1 || ydelta < 0)
 	{
-        tmp = config->state.scale;
-        if(mlx_is_key_down(config->mlx,MLX_KEY_LEFT_CONTROL))
-		    config->state.scale -= (sign(ydelta) * 50.0) / config->scale_constant;
-        else
-            config->state.scale -= (sign(ydelta) * 10.0) / config->scale_constant;
-        if(config->state.scale < 0) {
-            config->state.scale = tmp;
-        }
+		tmp = config->state.scale;
+		if (mlx_is_key_down(config->mlx, MLX_KEY_LEFT_CONTROL))
+			config->state.scale -= (sign(ydelta) * 50.0)
+				/ config->scale_constant;
+		else
+			config->state.scale -= (sign(ydelta) * 10.0)
+				/ config->scale_constant;
+		if (config->state.scale < 0)
+		{
+			config->state.scale = tmp;
+		}
 		calculate_state(config);
 		plot_grid(config);
 	}
@@ -76,20 +80,7 @@ static void	fdf_cursor(double xpos, double ypos, void *param)
 	}
 	if (mlx_is_mouse_down(config->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		config->state.rotation_x -= (ypos - config->cursor_data.last_ypos)
-			/ MOUSE_SENSITIVITY;
-		config->state.rotation_y += (xpos - config->cursor_data.last_xpos)
-			/ MOUSE_SENSITIVITY;
-        if(fabs(config->state.rotation_x) > 2*M_PI) {
-            config->state.rotation_x = fmod(config->state.rotation_x,
-                                            2*M_PI);
-        }
-        if(fabs(config->state.rotation_y) > 2*M_PI) {
-            config->state.rotation_y = fmod(config->state.rotation_y,
-                                            2*M_PI);
-        }
-		config->cursor_data.last_xpos = xpos;
-		config->cursor_data.last_ypos = ypos;
+		handle_cursor(config, xpos, ypos);
 		calculate_state(config);
 		plot_grid(config);
 	}
@@ -106,48 +97,28 @@ static void	fdf_cursor(double xpos, double ypos, void *param)
 
 static void	fdf_key(mlx_key_data_t keydata, void *param)
 {
-	t_engine_config *config;
+	t_engine_config	*config;
 
 	config = (t_engine_config *)param;
 	if (keydata.key == MLX_KEY_I && keydata.action == MLX_PRESS)
-	{
-		config->state.rotation_x = 45 * (M_PI / 180);
-		config->state.rotation_z = 35.264 * (M_PI / 180);
-		config->state.rotation_y = 0;
-		calculate_state(config);
-		plot_grid(config);
-	}
+		return (config->state.rotation_x = 45 * (M_PI / 180),
+			config->state.rotation_z = 35.264 * (M_PI / 180),
+			config->state.rotation_y = 0, calculate_state(config),
+			plot_grid(config));
 	else if (keydata.key == MLX_KEY_ESCAPE)
-	{
-		mlx_close_window(config->mlx);
-	}
+		return (mlx_close_window(config->mlx));
 	else if (keydata.key == MLX_KEY_KP_ADD)
-	{
-		config->state.z_scale += 0.02;
-		calculate_state(config);
-		plot_grid(config);
-	}
+		return (config->state.z_scale += 0.02, calculate_state(config),
+			plot_grid(config));
 	else if (keydata.key == MLX_KEY_KP_SUBTRACT)
-	{
-		config->state.z_scale -= 0.02;
-		calculate_state(config);
-		plot_grid(config);
-	}
+		return (config->state.z_scale -= 0.02, calculate_state(config),
+			plot_grid(config));
 	else if (keydata.key == MLX_KEY_Q)
-	{
-		config->state.rotation_z -= 2.5 * (M_PI / 180);
-		calculate_state(config);
-		plot_grid(config);
-	}
+		return (config->state.rotation_z -= 2.5 * (M_PI / 180),
+			calculate_state(config), plot_grid(config));
 	else if (keydata.key == MLX_KEY_E)
-	{
-		config->state.rotation_z += 2.5 * (M_PI / 180);
-		calculate_state(config);
-		plot_grid(config);
-	} else if(keydata.key == MLX_KEY_R) {
-        reset_view(config);
-        calculate_state(config);
-        plot_grid(config);
-    }
+		return (config->state.rotation_z += 2.5 * (M_PI / 180),
+			calculate_state(config), plot_grid(config));
+	else if (keydata.key == MLX_KEY_R)
+		return (reset_view(config), calculate_state(config), plot_grid(config));
 }
-

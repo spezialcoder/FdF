@@ -6,7 +6,7 @@
 /*   By: lsorg <lsorg@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 18:08:14 by lsorg             #+#    #+#             */
-/*   Updated: 2024/06/04 13:12:53 by lsorg            ###   ########.fr       */
+/*   Updated: 2024/06/05 18:06:22 by lsorg            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ t_matrix	shaper_translate(double translation_x, double translation_y,
 	return (transformation);
 }
 
-static t_matrix	shaper_rotate_Y(double theta)
+static t_matrix	shaper_rotate_y(double theta)
 {
 	t_matrix	transformation;
 
@@ -54,7 +54,7 @@ static t_matrix	shaper_rotate_Y(double theta)
 	return (transformation);
 }
 
-static t_matrix	shaper_rotate_Z(double theta)
+static t_matrix	shaper_rotate_z(double theta)
 {
 	t_matrix	transformation;
 
@@ -83,27 +83,14 @@ t_matrix	shaper_rotate(double rotation_x, double rotation_y,
 	transformation.matrix[2][1] = sin(rotation_x);
 	transformation.matrix[2][2] = cos(rotation_x);
 	transformation.matrix[3][3] = 1;
-	trot_z = shaper_rotate_Z(rotation_z);
-	trot_y = shaper_rotate_Y(rotation_y);
-    output = shaper_identity();
-    matrix_dot_ex_restrict(output,transformation,output);
-    matrix_dot_ex_restrict(output,trot_y,output);
-    matrix_dot_ex_restrict(output,trot_z,output);
+	trot_z = shaper_rotate_z(rotation_z);
+	trot_y = shaper_rotate_y(rotation_y);
+	output = shaper_identity();
+	matrix_dot_ex_restrict(output, transformation, output);
+	matrix_dot_ex_restrict(output, trot_y, output);
+	matrix_dot_ex_restrict(output, trot_z, output);
 	matrix_delete(trot_y);
 	matrix_delete(trot_z);
 	matrix_delete(transformation);
 	return (output);
-}
-
-t_matrix	shaper_identity(void)
-{
-	t_matrix identity;
-
-	identity = matrix_create(4, 4);
-	identity.matrix[0][0] = 1;
-	identity.matrix[1][1] = 1;
-	identity.matrix[2][2] = 1;
-	identity.matrix[3][3] = 1;
-
-	return (identity);
 }
